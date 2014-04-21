@@ -1,0 +1,3 @@
+readTitle.pl read the website title from the specified hostname or hostname
+files
+use perl readTitle.pl -h for more help
