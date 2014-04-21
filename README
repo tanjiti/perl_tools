@@ -1,3 +1,7 @@
-readTitle.pl read the website title from the specified hostname or hostname
+readTitle.pl: read the website title from the specified hostname or hostname
 files
 use perl readTitle.pl -h for more help
+
+isRealSpider.pl: determine the given ip is or not a
+google/baidu/yahoo/bing/msn spider
+use perl isRealSpider.pl -h for more help
