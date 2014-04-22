@@ -1,5 +1,5 @@
 readTitle.pl: read the website title from the specified hostname or hostname
-files
+files (support http and https)
 use perl readTitle.pl -h for more help
 
 isRealSpider.pl: determine the given ip is or not a
