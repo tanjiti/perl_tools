@@ -30,7 +30,7 @@ GetOptions(
 
 if($help){
     print <<__HELP__;
-Notice: In order to run this script you musth have Bundle::LWP,Getopt::Long,Regexp::Common Term::ANSIColor installed
+Notice: In order to run this script you must have Bundle::LWP,Getopt::Long,Regexp::Common Term::ANSIColor installed
 cpan -i Bundle::LWP
 cpan -i Getopt::Long
 cpan -i Term::ANSIColor
