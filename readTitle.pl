@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl 
 #author: tanjiti
 use strict;
 use warnings;
@@ -33,7 +33,7 @@ GetOptions(
 
 if($help){
     print <<__HELP__;
-Notice: In order to run this script you must have Bundle::LWP,Getopt::Long installed
+Notice: In order to run this script you must have Bundle::LWP,Getopt::Long,List::MoreUtils,HTML::Encoding installed
 
 Usage: $0 -f=filename
 
