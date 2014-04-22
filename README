@@ -5,3 +5,12 @@ use perl readTitle.pl -h for more help
 isRealSpider.pl: determine the given ip is or not a
 google/baidu/yahoo/bing/msn spider
 use perl isRealSpider.pl -h for more help
+
+getIPinfoOnline.pl: get the specify IP's basic information use online IP DB
+APIs as follows:
+    1  ipinfo.io
+    2  ip-api.com
+    3  ip-taobao.com
+    4  www.cz88.net
+    5  ip.chinaz.com
+use perl getIPinfoOnline.pl -h for more help
