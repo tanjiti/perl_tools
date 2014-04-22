@@ -14,3 +14,7 @@ APIs as follows:
     4  www.cz88.net
     5  ip.chinaz.com
 use perl getIPinfoOnline.pl -h for more help
+
+getIPinfoOffline.pl: get the specify IP/host's basic information use offline
+IP DB supplied by maxmind.com
+use perl getIPinfoOffline.pl -h for more help
