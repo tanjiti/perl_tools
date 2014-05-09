@@ -109,7 +109,8 @@ sub getResponse{
     my $title = "no title";
 
     if($response->is_success){
-        $title = readTitle($response,$host,$number); 
+        $title = readTitle($response,$host,$number) if $response->content_type
+        eq 'text/html'; 
            
     }
     elsif($status_line =~  /https/){
@@ -118,7 +119,8 @@ sub getResponse{
         $response = $browser->get($url);
        
         if($response->is_success){
-               $title = readTitle($response,$host,$number);
+               $title = readTitle($response,$host,$number) if
+               $response->content_type eq 'text/html';
         }
 
     }else{
@@ -136,13 +138,8 @@ sub readTitle{
 
     my $enco = encoding_from_http_message($response);
    
-    my $content = $response->decoded_content();
-    
-
-    if (defined $enco and $content){
-        
-        $content = decode($enco=>$response->content) or warn "cannot decode $host use $enco :  $! \n" ;
-    }
+         
+    my $content = decode($enco=>$response->content) or warn "cannot decode $host use $enco :  $! \n" ;
     
     if (defined $content and $content =~ /<title[\s\S]*?>(.*?)<\/title>/imxs){
         
