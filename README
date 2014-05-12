@@ -18,3 +18,8 @@ use perl getIPinfoOnline.pl -h for more help
 getIPinfoOffline.pl: get the specify IP/host's basic information use offline
 IP DB supplied by maxmind.com
 use perl getIPinfoOffline.pl -h for more help
+
+
+crackbasicAuth.pl: crack http basic authentication use username/password dict,
+also you can hide your ip use tor or proxy list
+use perl crackbasicAuth.pl -h for more help
