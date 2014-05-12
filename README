@@ -21,7 +21,7 @@ use perl getIPinfoOffline.pl -h for more help
 
 
 crackbasicAuth.pl: crack http basic authentication use username/password dict,
-also you can hide your ip use tor or proxy list
+also you can use tor or proxy list
 use perl crackbasicAuth.pl -h for more help
 
 isProxyOK.pl: determine the proxy(proxy list) is avaiable or not
