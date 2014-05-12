@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/local/bin/perl
 #Author: tanjiti
 use strict;
 use warnings;
@@ -9,6 +9,8 @@ use JSON;
 use feature qw{ switch };
 use Term::ANSIColor qw(:constants);
 use Regexp::Common qw(net);
+
+no warnings 'experimental::smartmatch';
 
 local $Term::ANSIColor::AUTORESET = 1;
 
@@ -101,7 +103,7 @@ sub queryIPINFO{
     my %datas = %$content_ref;
     
     foreach (keys %datas){
-        print  $_." : ".$datas{$_}."\n";
+        print  $_." : ".$datas{$_}."\n" if defined $datas{$_};
                                                       
     }
     return;
