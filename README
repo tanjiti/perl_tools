@@ -24,5 +24,9 @@ crackbasicAuth.pl: crack http basic authentication use username/password dict,
 also you can use tor or proxy list
 use perl crackbasicAuth.pl -h for more help
 
-isProxyOK.pl: determine the proxy(proxy list) is avaiable or not
+isProxyOK.pl: determine the proxy(proxy list) is avaiable or not and the proxy type(High Anoymity, Anoymity or Transparent)
 use perl isProxyOK.pl -h for more help
+
+For more info http://danqingdani.blog.163.com/blog/static/1860941952014412104711626/
+
+
