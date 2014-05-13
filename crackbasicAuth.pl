@@ -18,6 +18,7 @@ my  $username = q{};
 my  $password = q{};
 my  $tor = q{};
 my  $proxy = q{};
+my  $debug = q{};
 
 GetOptions(
     'help|h'=>\$help,
@@ -27,6 +28,7 @@ GetOptions(
     'host=s'=>\$host,
     'tor'=>\$tor,
     'proxy=s'=>\$proxy,
+    'vv'=>\$debug,
 );
 
 if($help){
@@ -42,7 +44,7 @@ cpan -i URI::Split
 cpan -i Term::ANSIColor
 
 Usage: $0 -url http://www.xxx.com/xxx/ -username tanjiti -password qwerasdf
-[-host www.xxx.com] [-tor] [-proxy http://xxx.xxx.xxx.:7808]
+[-host www.xxx.com] [-tor] [-proxy http://xxx.xxx.xxx.:7808] [-vv]
 where:
 -url : Specify the url for basic Authentication
 
@@ -58,6 +60,8 @@ on Debian/Ubuntu
 
 -proxy: Specify the proxy,it can ben a proxy string like
 "http://23.228.65.132:7808" or proxy list filename
+
+-vv: Specify the http request and response information
 
 -h : For more help
 
@@ -85,8 +89,8 @@ $host = $auth if defined $auth and $host eq q{};
 
 ##################################################################
 ##  readFromFile(): storage the file contents into an array     ##
-##  parameter: filename                                         ##
-##  return: @contents array                                     ##
+##  parameter: $filename                                        ##
+##  return: @contents(array)                                    ##
 ##################################################################
 sub readFromFile{
     my $filename = shift;
@@ -104,7 +108,7 @@ sub readFromFile{
 ##################################################################
 ##  getCode(): set http request and got http response code      ##
 ##  parameters:$url,$username,$password,$host,$proxy                            
-##  return : $response->code                                    ##
+##  return : $response->code(string)                            ##
 ##################################################################
 sub getCode{
     my ($url,$username,$password,$host,$proxy) = @_;
@@ -124,14 +128,16 @@ sub getCode{
     $ua->ssl_opts("verify_hostname" => 1);
     $ua->proxy([qw/http https/] => $proxy) if $proxy;
     my $response = $ua->get($url);
+    say BOLD BLUE $response->request->as_string if $debug;
+    say BOLD CYAN $response->headers->as_string if $debug;
     return $response->code;
 }
 
 
 ##################################################################
-##  tryLogin(): try username(dict),password(dict) use tor or proxy(list) 
+##  tryLogin(): try username(dict),password(dict) use tor or proxy(list) or nothing
 ##  parameters: $url, $usernames_ref, $passwords_ref, $host, $tor, $proxy_ref
-##  return: return the try result in a string
+##  return: result(string)
 ##################################################################
 sub tryLogin{
     my ($url, $usernames_ref, $passwords_ref, $host, $tor, $proxy_ref) =  @_;
