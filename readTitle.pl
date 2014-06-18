@@ -4,7 +4,6 @@ use warnings;
 use LWP::UserAgent;
 use Getopt::Long;
 use utf8;
-use HTML::Encoding 'encoding_from_http_message';
 use Encode qw(encode decode);
 use feature qw(say);
 
