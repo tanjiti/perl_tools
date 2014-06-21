@@ -2,6 +2,7 @@ readTitle.pl: read the website title from the specified hostname or hostname
 files (support http and https)
 use perl readTitle.pl hostname or hostname file
 
+getAlexaAndCat.pl: get the specify website's alexa value and web catalog
 isRealSpider.pl: determine the given ip is or not a
 google/baidu/yahoo/bing/msn spider
 use perl isRealSpider.pl -h for more help
