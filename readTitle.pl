@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use LWP::UserAgent;
 use Getopt::Long;
-#use utf8;
+use utf8;
 use Encode;# qw(encode decode);
 use HTML::Encoding 'encoding_from_http_message';
 use feature qw(say);
