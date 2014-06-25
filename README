@@ -5,7 +5,7 @@ use perl readTitle.pl hostname or hostname file
 getAlexaAndCat.pl: get the specify website's alexa value and web catalog
 use perl getAlexaAndCat hostname or hostname file
 
-isRealSpider.pl: determine the given ip is or not a
+isRealSpider.pl: detect the given ip is or not a
 google/baidu/yahoo/bing/msn spider
 use perl isRealSpider.pl -h for more help
 
@@ -20,6 +20,7 @@ use perl getIPinfoOnline.pl -h for more help
 
 getIPinfoOffline.pl: get the specify IP/host's basic information use offline
 IP DB supplied by maxmind.com
+
 use perl getIPinfoOffline.pl -h for more help
 
 
@@ -31,5 +32,13 @@ isProxyOK.pl: determine the proxy(proxy list) is avaiable or not and the proxy t
 use perl isProxyOK.pl -h for more help
 
 For more info http://danqingdani.blog.163.com/blog/static/1860941952014412104711626/
+
+ip2range.pl: read ip list from file and transform to ip range format like 1.2.3.4- 1.2.3.56
+use perl ip2range2.pl ipList file
+
+ipv4_in_range.pl: detect is a ip in a ip range or not,support formats as followsperl 1.2.3.4 1.2.3.0/10
+perl 1.2.3.4 1.2.3.0/255.255.255.0
+perl 1.2.3.4 1.2.3.0-1.2.3.233
+perl 1.2.3.4 1.2.3.*
 
 
