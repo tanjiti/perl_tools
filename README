@@ -39,4 +39,5 @@ perl 1.2.3.4 1.2.3.0/255.255.255.0
 perl 1.2.3.4 1.2.3.0-1.2.3.233
 perl 1.2.3.4 1.2.3.*
 
-
+getWebPageContent.pl : get web page content of the specify url, especially for chinese webpage
+use perl getWebPageContent.pl http://www.baidu.com
