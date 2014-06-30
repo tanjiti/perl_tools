@@ -7,6 +7,7 @@ use utf8;
 use Encode;# qw(encode decode);
 use HTML::Encoding 'encoding_from_http_message';
 use feature qw(say);
+use Try::Tiny;
 
 binmode(STDIN, ':encoding(utf8)');
 binmode(STDOUT, ':encoding(utf8)');
@@ -111,7 +112,7 @@ sub getTitle{
     $enco = "GB2312" if $is_ugly == 1;
     #encode title
     
-    $title = decode($enco, $title);
+    try{$title = decode($enco, $title);};
     
 
     $title =~ s/\r\n//g if $title ne "";
