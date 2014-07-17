@@ -116,7 +116,7 @@ sub getTitle{
     
 
     $title =~ s/\r\n//g if $title ne "";
-
+    $title =~ s/\n//g if $title ne "";
     $title = "no title" if $title eq "";
 
 
