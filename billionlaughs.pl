@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use feature qw(say);
 #number of entities is 2^30 if $entities = 30
-my $entities = 30;
+my $entities = 30;#you can modify the value to generate more entities
 my $i = 1;
 
 open my $OUT, ">", "BillionLaughs.txt" or die "cannot write to BillionLaughs.txt $! \n";
