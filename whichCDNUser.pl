@@ -104,6 +104,10 @@ if (-e $hostname){
 
 sub whichCDNUser{
     my $hostname = shift;
+    chomp $hostname;
+    if ($hostname =~ /^(?:https?:\/\/)([-.\d\w]+)/i){
+	$hostname = $1;
+    }
     my $result = qw();
     if(isCDNUser($hostname,\@ips_cdn_cloudflare)){
       $result = "$hostname\tcloudflare";

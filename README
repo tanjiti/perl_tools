@@ -43,7 +43,5 @@ getWebPageContent.pl : get web page content of the specify url, especially for c
 usage: perl getWebPageContent.pl http://www.baidu.com
 
 whichCDNUser.pl: detect cdn provider of the special hostname
-
 includs cloudflare, 360wanzhangweishi, jiasule, yuanjiasu, anquanbao, incapsula
-
 usage: perl whichCDNUser.pl www.tanjiti.com
