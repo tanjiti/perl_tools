@@ -39,6 +39,7 @@ my @ips_cdn_360 = qw(183.136.133.0-183.136.133.255
 61.240.144.0-61.240.144.255
 113.17.174.0-113.17.174.255
 125.88.189.0-125.88.189.255
+125.88.190.0-125.88.190.255
 120.52.18.1-120.52.18.255);
 
 my @ips_cdn_jiasule = qw(119.188.35.0-119.188.35.255
@@ -157,7 +158,7 @@ sub getIPFromStr{
 
 sub getDNS{
     my $hostname = shift;
-    my $result = `dig $hostname `;
+    my $result = `dig $hostname \@114.114.114.114`; #you can choose your own dns address
     return $result;
 }
 
