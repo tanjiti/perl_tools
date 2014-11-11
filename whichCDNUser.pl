@@ -117,7 +117,7 @@ sub whichCDNUser{
     }elsif(isCDNUser($hostname,\@ips_cdn_jiasule)){
       $result =  "$hostname\tjiasule";
     }elsif(isCDNUser($hostname,\@ips_cdn_yunjiasu)){
-      $result = "$hostname\tyuanjiasu";
+      $result = "$hostname\tyunjiasu";
     }elsif(isCDNUser($hostname,\@ips_cdn_anquanbao)){
       $result = "$hostname\tanquanbao";
     }elsif(isCDNUser($hostname,\@ips_cdn_incapsula)){
