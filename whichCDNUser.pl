@@ -83,10 +83,13 @@ my @ips_cdn_incapsula = qw(199.83.128.0/21
 my @ips_cdn_yundun = qw();
 
 
-my @ips_cdn_yunjiasu = qw(222.216.190.0-222.216.190.255 61.155.149.0-61.155.149.255
+my @ips_cdn_yunjiasu_2 = qw(222.216.190.0-222.216.190.255 61.155.149.0-61.155.149.255
 119.188.14.0-119.188.14.255 61.182.137.0-61.182.137.255 117.34.28.0-117.34.28.255
 119.188.132.0-119.188.132.255 42.236.7.0-42.236.7.255 183.60.235.0-183.60.235.255
-117.27.149.0-117.27.149.255 216.15.172.0/24);
+117.27.149.0-117.27.149.255 216.15.172.0/24 119.167.246.0/24);
+
+
+my @ips_cdn_yunjiasu_3 = qw(119.167.246.0-119.167.246.254 117.27.149.1-117.27.149.254 124.95.168.129-124.95.168.254 183.61.236.0-183.61.236.254 59.51.81.0-59.51.81.254 199.27.128.1-199.27.135.254 173.245.48.1-173.245.63.254 103.21.244.1-103.21.247.254 103.22.200.1-103.22.203.254 103.31.4.1-103.31.7.254 141.101.64.1-141.101.127.254 108.162.192.1-108.162.255.254 190.93.240.1-190.93.255.254 188.114.96.1-188.114.111.254 197.234.240.1-197.234.243.254 198.41.128.1-198.41.255.254 162.158.0.1-162.159.255.254 104.16.0.1-104.31.255.254);
 
 if (-e $hostname){
 	my $out = $hostname."_cdnprovider";
@@ -116,8 +119,10 @@ sub whichCDNUser{
       $result =  "$hostname\t360wangzhanweishi";
     }elsif(isCDNUser($hostname,\@ips_cdn_jiasule)){
       $result =  "$hostname\tjiasule";
-    }elsif(isCDNUser($hostname,\@ips_cdn_yunjiasu)){
-      $result = "$hostname\tyunjiasu";
+    }elsif(isCDNUser($hostname,\@ips_cdn_yunjiasu_2)){
+      $result = "$hostname\tyunjiasu_2";
+    }elsif(isCDNUser($hostname,\@ips_cdn_yunjiasu_3)){
+      $result = "$hostname\tyunjiasu_3";
     }elsif(isCDNUser($hostname,\@ips_cdn_anquanbao)){
       $result = "$hostname\tanquanbao";
     }elsif(isCDNUser($hostname,\@ips_cdn_incapsula)){
