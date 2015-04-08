@@ -113,16 +113,16 @@ sub whichCDNUser{
 	$hostname = $1;
     }
     my $result = qw();
-    if(isCDNUser($hostname,\@ips_cdn_cloudflare)){
-      $result = "$hostname\tcloudflare";
+    if(isCDNUser($hostname,\@ips_cdn_yunjiasu_3)){
+      $result = "$hostname\tyunjiasu_3";
     }elsif(isCDNUser($hostname,\@ips_cdn_360)){
       $result =  "$hostname\t360wangzhanweishi";
     }elsif(isCDNUser($hostname,\@ips_cdn_jiasule)){
       $result =  "$hostname\tjiasule";
     }elsif(isCDNUser($hostname,\@ips_cdn_yunjiasu_2)){
       $result = "$hostname\tyunjiasu_2";
-    }elsif(isCDNUser($hostname,\@ips_cdn_yunjiasu_3)){
-      $result = "$hostname\tyunjiasu_3";
+    }elsif(isCDNUser($hostname,\@ips_cdn_cloudflare)){
+      $result = "$hostname\tcloudflare";
     }elsif(isCDNUser($hostname,\@ips_cdn_anquanbao)){
       $result = "$hostname\tanquanbao";
     }elsif(isCDNUser($hostname,\@ips_cdn_incapsula)){
@@ -163,7 +163,8 @@ sub getIPFromStr{
 
 sub getDNS{
     my $hostname = shift;
-    my $result = `dig $hostname \@114.114.114.114`; #you can choose your own dns address
+    my $result = `dig $hostname \@114.114.114.114 `; #you can choose your own dns address
+    
     return $result;
 }
 
