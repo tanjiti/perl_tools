@@ -163,7 +163,7 @@ sub getIPFromStr{
 
 sub getDNS{
     my $hostname = shift;
-    my $result = `dig $hostname `; #you can choose your own dns address
+    my $result = `dig $hostname \@114.114.114.114`; #you can choose your own dns address
     
     return $result;
 }
