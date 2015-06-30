@@ -6,11 +6,11 @@ use Getopt::Long;
 use LWP::UserAgent;
 use utf8;
 use JSON;
-use feature qw{ switch };
+use feature qw{ switch  say};
 use Term::ANSIColor qw(:constants);
 use Regexp::Common qw(net);
 
-no warnings 'experimental::smartmatch';
+#no warnings 'experimental::smartmatch';
 
 local $Term::ANSIColor::AUTORESET = 1;
 
@@ -27,7 +27,7 @@ my $option = 0;
 GetOptions(
     'help|h'=>\$help,
     'ip=s'=>\$ip,
-    'o=i'=>\$option,
+    't=i'=>\$option,
 );
 
 if($help){
@@ -170,8 +170,10 @@ sub getResult{
     my ($ip, $option) = @_;
 
     my $browser = LWP::UserAgent->new();
-
-    $browser->default_headers->push_header('Accept-Encoding'=>'gzip,deflate,sdch');
+    #$browser->show_progress(1);
+    $browser->default_headers->push_header('Accept-Encoding'=>'gzip,deflate');
+    $browser->default_headers->push_header('Accept'=>'*/*');
+    $browser->default_headers->push_header('Connection'=>'keep-alive');
 
     my $UA = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:12.0) Gecko/20100101 Firefox/12.0";
 
@@ -182,11 +184,11 @@ sub getResult{
     my $url = q{};
 
     given ($option){
-        when (1) { $url = "http://ipinfo.io/${ip}/json"; break;}
-        when (2) { $url = "http://ip-api.com/json/${ip}"; break;}
-        when (3) { $url = "http://ip.taobao.com/service/getIpInfo.php?ip=${ip}"; break;}
-        when (4) { $url = "http://www.cz88.net/ip/index.aspx?ip=${ip}"; break;}
-        when (5) { $url = "http://ip.chinaz.com/?IP=${ip}"; break;}
+        when (1) { $url = "http://ipinfo.io/${ip}/json";  $browser->default_headers->push_header("Host"=>"ipinfo.io"); break;} 
+        when (2) { $url = "http://ip-api.com/json/${ip}"; $browser->default_headers->push_header("Host"=>"ip-api.com"); break;}
+        when (3) { $url = "http://ip.taobao.com/service/getIpInfo.php?ip=${ip}"; $browser->default_headers->push_header("Host"=>"ip.taobao.com"); break;}
+        when (4) { $url = "http://www.cz88.net/ip/index.aspx?ip=${ip}"; $browser->default_headers->push_header("Host"=>"www.cz88.net"); break;}
+        when (5) { $url = "http://ip.chinaz.com/?IP=${ip}"; $browser->default_headers->push_header("Host"=>"ip.chinaz.com"); break;}
         default {print BOLD BLUE "Wrong Options \n"; break;}
     
     }
@@ -195,7 +197,7 @@ sub getResult{
     
     if($response->is_success){
         my $content = $response->decoded_content;
-
+        say $response->request->as_string;
         given ($option){
             when (1) { queryIPINFO($content); break;}
             when (2) { queryIPAPI($content); break;}
