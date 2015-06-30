@@ -45,6 +45,7 @@ This script is a on_line ip info query use these APIs interface as follows:
 3. ip-taobao.com (chinese)
 4. www.cz88.net (chinese)
 5. ip.chinaz.com (chinese)
+6. www.ip138.com (chinese)
 
 
 Usage: $0 -ip xxx.xxx.xxx.xxx [-t x]
@@ -57,6 +58,7 @@ where:
     3  ip-taobao.com
     4  www.cz88.net
     5  ip.chinaz.com
+    6  www.ip138.com
     no parameter means use all Interfaces , is the default options
 
 -h : For more help
@@ -83,12 +85,14 @@ given ($option){
     when (3) { getResult($ip,3); break;} 
     when (4) { getResult($ip,4); break;}
     when (5) { getResult($ip,5); break;}
+    when (6) { getResult($ip,6); break;}
     default { 
         getResult($ip,1); 
         getResult($ip,2); 
         getResult($ip,3); 
         getResult($ip,4); 
         getResult($ip,5); 
+        getresult($ip,6);
     }
 
 
@@ -165,12 +169,21 @@ sub queryCHINAZ{
     return;
 }
 
+sub queryIP138{
+    my $content = shift;
+    print BOLD CYAN "***********************IP INFO from ip138 **********************\n";
+
+    if ( $content =~ /<ul class="ul1"><li>(.*?)<\/li>/i){
+        print $1,"\n";
+    }
+    return;
+
+}
 
 sub getResult{
     my ($ip, $option) = @_;
 
     my $browser = LWP::UserAgent->new();
-    #$browser->show_progress(1);
     $browser->default_headers->push_header('Accept-Encoding'=>'gzip,deflate');
     $browser->default_headers->push_header('Accept'=>'*/*');
     $browser->default_headers->push_header('Connection'=>'keep-alive');
@@ -189,6 +202,7 @@ sub getResult{
         when (3) { $url = "http://ip.taobao.com/service/getIpInfo.php?ip=${ip}"; $browser->default_headers->push_header("Host"=>"ip.taobao.com"); break;}
         when (4) { $url = "http://www.cz88.net/ip/index.aspx?ip=${ip}"; $browser->default_headers->push_header("Host"=>"www.cz88.net"); break;}
         when (5) { $url = "http://ip.chinaz.com/?IP=${ip}"; $browser->default_headers->push_header("Host"=>"ip.chinaz.com"); break;}
+        when (6) { $url = "http://www.ip138.com/ips1388.asp?ip=${ip}&action=2"; $browser->default_headers->push_header("Host"=>"www.ip138.com"); break;}
         default {print BOLD BLUE "Wrong Options \n"; break;}
     
     }
@@ -197,13 +211,13 @@ sub getResult{
     
     if($response->is_success){
         my $content = $response->decoded_content;
-        say $response->request->as_string;
         given ($option){
             when (1) { queryIPINFO($content); break;}
             when (2) { queryIPAPI($content); break;}
             when (3) { queryTAOBAO($content); break;}
             when (4) { queryCZ88($content); break;}
             when (5) { queryCHINAZ($content); break;}
+            when (6) { queryIP138($content); break;}
             default {print BOLD BLUE "Wrong Options \n"; break;}
         }
     }
