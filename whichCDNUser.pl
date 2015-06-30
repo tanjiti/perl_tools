@@ -90,7 +90,50 @@ my @ips_cdn_yunjiasu_2 = qw(222.216.190.0-222.216.190.255 61.155.149.0-61.155.14
 
 
 my @ips_cdn_yunjiasu_3 = qw(119.167.246.0-119.167.246.254 117.27.149.1-117.27.149.254 124.95.168.129-124.95.168.254 183.61.236.0-183.61.236.254 59.51.81.0-59.51.81.254 199.27.128.1-199.27.135.254 173.245.48.1-173.245.63.254 103.21.244.1-103.21.247.254 103.22.200.1-103.22.203.254 103.31.4.1-103.31.7.254 141.101.64.1-141.101.127.254 108.162.192.1-108.162.255.254 190.93.240.1-190.93.255.254 188.114.96.1-188.114.111.254 197.234.240.1-197.234.243.254 198.41.128.1-198.41.255.254 162.158.0.1-162.159.255.254 104.16.0.1-104.31.255.254 61.54.46.1-61.54.46.254 61.54.47.1-61.54.47.254 101.71.55.1-101.71.55.254 101.71.56.1-101.71.56.254 115.231.235.1-115.231.235.254 115.231.236.1-115.231.236.254 183.232.51.1-183.232.51.254 117.34.111.1-117.34.111.254 117.34.112.1-117.34.112.254 120.52.113.1-120.52.113.254 120.52.114.1-120.52.114.254 182.150.0.1-182.150.0.254 182.150.1.1-182.150.1.254);
+=pod
+my $file = "sql_insert.sql";
+open my $FH ,">$file" or die "cannot open $file for writing";
+foreach (@ips_cdn_cloudflare){
+    say $FH "replace into cdnip(cdnname,iprange) values(\"cloudflare\",\"$_\");";
 
+}
+
+foreach (@ips_cdn_yunjiasu_3){
+    say $FH "replace into cdnip(cdnname,iprange) values(\"yunjiasu3\",\"$_\");";
+}
+
+
+foreach (@ips_cdn_yunjiasu_2){
+    say $FH "replace into cdnip(cdnname,iprange) values(\"yunjiasu2\",\"$_\");";
+    }
+
+
+
+
+foreach (@ips_cdn_incapsula){
+    say $FH "replace into cdnip(cdnname,iprange) values(\"incapsula\",\"$_\");";
+        }
+
+
+
+foreach (@ips_cdn_anquanbao){
+    say $FH "replace into cdnip(cdnname,iprange) values(\"anquanbao\",\"$_\");";
+            }
+                
+
+
+foreach (@ips_cdn_360){
+    say $FH "replace into cdnip(cdnname,iprange) values(\"360\",\"$_\");";
+            }
+                
+
+
+foreach (@ips_cdn_jiasule){
+    say $FH "replace into cdnip(cdnname,iprange) values(\"jiasule\",\"$_\");";
+}
+                
+close $FH;
+=cut
 if (-e $hostname){
 	my $out = $hostname."_cdnprovider";
 	open my $FH, "<:encoding(UTF-8)",$hostname or die "cannot open $hostname for reading $! \n";
@@ -137,7 +180,15 @@ sub isCDNUser{
     my ($hostname,$ips_cdn_ref) = @_;
     my @ips_cdn = @$ips_cdn_ref;
     my $isCDNUser = 0;
-    my @ips_dig = getIPFromStr(getDNS($hostname));
+    my @ips_dig = ();
+    unless($hostname =~ /\d+\.\d+\.\d+\.\d+/){
+
+
+    @ips_dig = getIPFromStr(getDNS($hostname));
+
+    }else{
+        @ips_dig = ($hostname);    
+    }
     
     foreach my $host_ip (@ips_dig){ 
         foreach my $cdn_ip (@ips_cdn) {
@@ -163,7 +214,7 @@ sub getIPFromStr{
 
 sub getDNS{
     my $hostname = shift;
-    my $result = `dig $hostname \@114.114.114.114`; #you can choose your own dns address
+    my $result = `dig $hostname `; #you can choose your own dns address
     
     return $result;
 }
