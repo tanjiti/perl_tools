@@ -9,26 +9,24 @@ use Term::ANSIColor qw(:constants);
 use Time::HiRes qw(time);
 use URI::Split qw(uri_split);
 local $Term::ANSIColor::AUTORESET = 1;
+use Data::Dumper;
+use JSON;
 
 my $help = q{};
 my $proxy = q{};
 my $fileout = q{};
-my $url = "http://www.baidu.com";
-my $host = q{};
-my $logpath = "/var/log/lighttpd/access.log";
+my $url = "http://www.tanjiti.com/proxy.php";
+my $host = "www.tanjiit.com";
 my $moreInfo = q{};
 my $ip = q{};
-
+my $http_retry = 3;
+my $ms = 200;
 
 GetOptions(
     'help|h'=>\$help,
     'proxy=s'=>\$proxy,
     'out=s'=>\$fileout,
-    'url=s'=>\$url,
-    'host|=s'=>\$host,
-    'logpath=s'=>\$logpath,
     'vv'=>\$moreInfo,
-    'ip=s'=>\$ip,
 );
 
 if($help){
@@ -62,19 +60,13 @@ Usage: $0 -proxy http://xxx.xxx.xxx.:7808 [-out xxx] [-url http://www.baidu.com]
 2. the connection spend time
 3. proxy Anonymous degree
 (1)High Anonymity Proxy :No VIA , NO X_Forwarded_For headers
-(2)Anonymity Proxy: hide your ip
+(2)Anonymity Proxy: hide your ip or fake a ip
 (3)Transparent Proxy: have proxy server info in via header and your ip in x_forwarded_for headers
 
-Preconditions:
-1. Install Web server: Lighttpd or Apache or Nginx or tomcat or IIS
-2. usable domain/Internet IP  with the web server
 
-Usage: $0 -vv -proxy http://xxx.xxx.xxx.:7808 [-out xxx] -url http://YOUR DOMAIN -ip xxx.xxx.xxx  [-host YourDomain] [-logpath Your Web Server Log path]
-       $0  -vv -proxy proxyfile [-out xxx] -url http://YOUR DOMAIN -ip xxx.xxx.xxx [-host YourDomain] [-logpath Your Web Server Log path]
+Usage: $0 -vv -proxy http://xxx.xxx.xxx.:7808 [-out xxx]   
+       $0  -vv -proxy proxyfile [-out xxx]   
 -vv: Specify get proxy Anonymous degree
--url: Specify the domain bind your web server e.g. http://www.tanjiti.com 
--host: Specify the hostname for Host header , default value is split from url
--logpath: Specify the web server log path e.g. /var/log/lighttpd/access.log for default lighttpd log path
 -ip: Specify the server ip
 
 -h: For more help
@@ -88,12 +80,31 @@ chomp $proxy;
 chomp $fileout;
 chomp $url;
 chomp $host;
-chomp $logpath;
 chomp $ip;
 
 croak "You need to specify the proxy(proxyfile) \n Please run --help for more informations \n" if $proxy eq q{};
-croak "$logpath is not readable " unless -r $logpath;
-croak "You need to specify the url and the server ip \n Please run --help for more informations \n" if $moreInfo and ($url eq "http://www.baidu.com" or $ip eq q{});
+
+sub getInternalIPv4{
+my $command = "hostname --all-ip-addresses";
+my $result = `$command`;
+die "execute $command failed \n " if $? != 0;
+my @ips = split /\s/, $result;
+#print Dumper(\@ips);
+return \@ips;
+
+
+}
+
+sub getExteranlIPv4{
+my $command = "curl -s ipinfo.io";
+my $result = `$command`;
+die "execute $command failed \n " if $? != 0;
+my $ip = "";
+$ip = $1 if $result =~ /\"ip\":\s\"([^\"]+)\"/;
+
+return $ip;
+}
+
 ##################################################################
 ##  readFromFile(): storage the file contents into an array     ##
 ##  parameter: $filename                                         ##
@@ -142,11 +153,11 @@ sub isProxyLive{
 
     my ($scheme,$auth,$path,$query,$frag) = uri_split($url);
 
-    $host = $auth if defined $auth and $host eq q{};
+   $host = $auth if defined $auth and $host eq q{};
 
     my $ua = LWP::UserAgent->new;
     $ua->agent("Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:12.0) Gecko/20100101 Firefox/12.0");
-    $ua->timeout(10);
+    $ua->timeout(100);
     $ua->default_headers->push_header('Accept'=>'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8');
     $ua->default_headers->push_header('Accept-Encoding'=>'gzip,deflate,sdch');
     $ua->default_headers->push_header('Host' => $host);
@@ -157,8 +168,30 @@ sub isProxyLive{
     my $response = $ua->get($url);
     my $end = time();
     my $timeCost = $end - $start;
+
+    my $codeStart = substr $response->code,0,1;
+    my $number_get_retry = 0;
+
+    while(($codeStart eq "5") and ($number_get_retry < $http_retry)){
+
+        $start = time();
+        $response = $ua->get($url);
+        $end = time();
+        $timeCost = $end - $start;
+        $codeStart =  substr $response->code,0,1;
+        
+        $number_get_retry = $number_get_retry +1;
+        usleep($ms);
+
+
+    }
     my $isLive = $response->code == 200 ? 1: 0;
-    return ($isLive,$timeCost);
+    
+
+
+    my $response_content = "";
+    $response_content = $response->decoded_content if $isLive;
+    return ($isLive,$timeCost, $response_content);
 
 }
 
@@ -168,34 +201,48 @@ sub isProxyLive{
 ## return: $ProxyType string (High Anonymity,Anoymity,Transparent)
 #################################################################
 sub getProxyType{
-    my($logpath, $ip) = @_;
-
-    my $log = `tail -1 $logpath`;
-
-    my $ProxyType = q{};
-
-    if ($log =~ /"\s+?"([-0-9.,a-zA-Z]+)"\s+?"(.+)"$/){
-        my $x_forwarded_for = $1;
-        my $via = $2;
-
-        #$isExposeIP == -1 : hide your ip 
-        #$isExposeIP != -1 : expose your ip
         
-        
-        my $isExposeIP = index($x_forwarded_for, $ip) ; 
+    
+    my $response_content = shift;
+    say $response_content if $moreInfo;
+
+    my @ips_no_proxy = qw();
+    my $ips_internal_ref = getInternalIPv4();
+    my $ip_external = getExteranlIPv4();
+    push  @ips_no_proxy,$ip_external  if $ip_external;
+    push @ips_no_proxy, @$ips_internal_ref  if @$ips_internal_ref and length(@$ips_internal_ref) >=1;
+    
+    my $json_content_ref = decode_json $response_content;
+
+    my $proxy_type = "";
+    if($json_content_ref->{"PROXY_TYPE"}){
+        $proxy_type = $json_content_ref->{"PROXY_TYPE"};
+        if($proxy_type eq "transparent"){
+            my $http_x_forwarded_for = $json_content_ref->{"HTTP_X_FORWARDED_FOR"};
+
+            my $is_fraud_ip = 1;
+            if($http_x_forwarded_for){
+                foreach my $item (@ips_no_proxy){
+                    my $pos = index $http_x_forwarded_for, $item;
+                    if($pos != -1){
+                        $is_fraud_ip = 0;
+                        last;
+                    }
 
 
-        if($via eq "-" and $x_forwarded_for eq "-"){
-            $ProxyType = "High Anonymity Proxy ! No VIA , NO X_Forwarded_For include ip list ";
-        }elsif($isExposeIP != -1){
-            $ProxyType = "Transparent Proxy !  $via ";
-        }else{
-            $ProxyType = "Anonymity Proxy ! Hide your real IP !";
+                }
+
+            }
+
+            $proxy_type = "fraud proxy" if $is_fraud_ip == 1;
+
         }
-        
-        
     }
-    return $ProxyType;
+
+        
+
+    
+    return $proxy_type;
 }
 
 my @proxys = -r $proxy ? readFromFile($proxy) : $proxy;
@@ -204,11 +251,11 @@ my @proxys = -r $proxy ? readFromFile($proxy) : $proxy;
 my @ok_proxys = ();
 
 foreach  (@proxys){
-    my ($isLive, $timeCost) = isProxyLive($_,$url,$host);
+    my ($isLive, $timeCost, $response_content) = isProxyLive($_,$url,$host);
 
 	if ($isLive){
     	
-        my $ProxyDegree = getProxyType($logpath,$ip) if $moreInfo ne q{};
+        my $ProxyDegree = getProxyType($response_content) if $moreInfo ne q{};
     	push @ok_proxys, $_ if $isLive;
 
         my $proxyInfo = $moreInfo ? "[Proxy] $_ [TIME]: $timeCost [ProxyInfo]: $ProxyDegree" : "[Proxy] $_ [TIME]: $timeCost";
