@@ -8,6 +8,7 @@ use Carp;
 use Term::ANSIColor qw(:constants);
 use Time::HiRes qw(time);
 use URI::Split qw(uri_split);
+use Time::HiRes qw(usleep);
 local $Term::ANSIColor::AUTORESET = 1;
 use Data::Dumper;
 use JSON;
@@ -163,7 +164,9 @@ sub isProxyLive{
     $ua->default_headers->push_header('Host' => $host);
     $ua->default_headers->push_header('Connection' => 'keep-alive');
     $ua->proxy([qw/http https/] => $proxy);
-    $ua->show_progress(1);
+    $ua->show_progress(0);
+
+
     my $start = time();
     my $response = $ua->get($url);
     my $end = time();
