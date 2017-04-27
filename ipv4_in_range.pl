@@ -25,7 +25,6 @@ sub ipv4_in_range{
         }else{
             #netmask is a CIDR size block like 1.2.3.4/24
             my ($a,$b,$c,$d) = split('.',$range,4);
-            $range = sprintf("%s.%s.%s.%s",$a?$a:'0',$b?$b:'0',$c?$c:'0',$d?$d:'0');
 
             my $wildcard_dec = 2 ** (32 - $netmask) -1;
             $netmask_dec = (~$wildcard_dec);
